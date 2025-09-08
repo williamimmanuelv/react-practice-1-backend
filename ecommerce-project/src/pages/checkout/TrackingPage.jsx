@@ -1,51 +1,95 @@
-import { Link } from "react-router";
+import { Link, useParams } from "react-router";
 import { Header } from "../../components/Header";
 import './TrackingPage.css'
+import { useEffect, useState } from "react";
+import axios from "axios";
+import dayjs from "dayjs";
 
-export function TrackingPage(){
-    return(
-        <>
-        <title> tracking </title>
-        <link rel="icon" type="image/svg+xml" href="tracking-favicon.png" />
+export function TrackingPage({ cart }) {
+  const params = useParams();
+  const { orderId, productId } = params;
+  const [orders, setOrders] = useState(null)
+  
+  useEffect(() => {
+    const getTrackingData = async () => {
+      const response = await axios.get(`/api/orders/${orderId}?expand=products`);
+      setOrders(response.data)
+      console.log(response.data);
+    };
+    getTrackingData();
+  }, [orderId])
 
-        <Header/>
-            <div class="tracking-page">
-      <div class="order-tracking">
-        <Link class="back-to-orders-link link-primary" to="/orders">
-          View all orders
-        </Link>
+  if (!orders) {
+    return null
+  }
 
-        <div class="delivery-date">
-          Arriving on Monday, June 13
-        </div>
+  console.log(orders);
 
-        <div class="product-info">
-          Black and Gray Athletic Cotton Socks - 6 Pairs
-        </div>
+  console.log('produ' + productId);
 
-        <div class="product-info">
-          Quantity: 1
-        </div>
+  const orderProduct = orders.products.find((orderProduct) => {
+    return orderProduct.productId === productId;
+  });
 
-        <img class="product-image" src="images/products/athletic-cotton-socks-6-pairs.jpg" />
+  // progress bar
+  const totalDeliveryTimeMs = orderProduct.estimatedDeliveryTimeMs - orders.orderTimeMs;
+  const timePassesMs = dayjs().valueOf() - orders.orderTimeMs;
+  let deliveryPercent = (timePassesMs / totalDeliveryTimeMs) * 100
 
-        <div class="progress-labels-container">
-          <div class="progress-label">
-            Preparing
+  if (deliveryPercent > 100) {
+    deliveryPercent = 100;
+  }
+
+
+  // delivery label
+
+  const isPreparing = deliveryPercent < 33;
+  const isShipped = deliveryPercent >=33 ;
+  const isDelivered = deliveryPercent === 100;
+
+  return (
+    <>
+      <title> tracking </title>
+      <link rel="icon" type="image/svg+xml" href="tracking-favicon.png" />
+
+      <Header cart={cart} />
+      <div className="tracking-page">
+        <div className="order-tracking">
+          <Link className="back-to-orders-link link-primary" to="/orders">
+            View all orders
+          </Link>
+
+          <div className="delivery-date">
+            {deliveryPercent >= 100 ? 'Delivered on ' : 'Arriving on'} {dayjs(orderProduct.estimatedDeliveryTimeMs).format('MMMM DD')}
           </div>
-          <div class="progress-label current-status">
-            Shipped
-          </div>
-          <div class="progress-label">
-            Delivered
-          </div>
-        </div>
 
-        <div class="progress-bar-container">
-          <div class="progress-bar"></div>
+          <div className="product-info">
+            {orderProduct.product.name}
+          </div>
+
+          <div className="product-info">
+            Quantity: {orderProduct.quantity}
+          </div>
+
+          <img className="product-image" src={orderProduct.product.image} />
+
+          <div className="progress-labels-container">
+            <div className={` progress-label ${isPreparing && 'current-status'}`}>
+              Preparing
+            </div>
+            <div className={` progress-label ${isShipped && 'current-status'}`}>
+              Shipped
+            </div>
+            <div className={` progress-label ${isDelivered && 'current-status'}`}>
+              Delivered
+            </div>
+          </div>
+
+          <div className="progress-bar-container">
+            <div className="progress-bar" style={{ width: ` ${deliveryPercent} %` }}></div>
+          </div>
         </div>
       </div>
-    </div>
-        </>
-    )
+    </>
+  )
 }
