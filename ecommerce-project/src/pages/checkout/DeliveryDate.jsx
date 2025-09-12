@@ -1,11 +1,11 @@
 import dayjs from "dayjs";
 
-export function DeliveryDate( selectedDeliveyOption ) {
+export function DeliveryDate({ selectedDeliveryOption }) {
 
     return(
         <div className="delivery-date">
               Delivery date:
-              {dayjs(selectedDeliveyOption.estimatedDeliveryTimeMs).format('dddd, MMMM D')};
+              {dayjs(selectedDeliveryOption.estimatedDeliveryTimeMs).format('dddd, MMMM D')};
         </div>
     );
 }

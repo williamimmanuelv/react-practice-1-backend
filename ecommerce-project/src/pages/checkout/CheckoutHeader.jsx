@@ -1,7 +1,6 @@
 import './CheckoutHeader.css'
 import { Link } from 'react-router'
 export function CheckoutHeader({ cart }) {
-  console.log(cart);
 
   return (
     <>
