@@ -3,7 +3,7 @@ import { Fragment } from "react";
 import { Link } from "react-router";
 
 export function OrderDetailsGrid( { order } ) {
-  console.log(order);
+
   
     return(
         <div className="order-details-grid">
