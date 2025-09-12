@@ -8,8 +8,6 @@ import './App.css'
 import { TrackingPage } from './pages/checkout/TrackingPage'
 import { NotFound } from './pages/home/NotFound'
 
-
-
 function App() {
   const [cart, setcart] = useState([]);
         const loadCart = async() => {
@@ -18,8 +16,7 @@ function App() {
           setcart(response.data) 
         }
   useEffect(() => {
-
-        loadCart()
+        loadCart();
   },[])
 
   return (
