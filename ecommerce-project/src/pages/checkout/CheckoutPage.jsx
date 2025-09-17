@@ -14,16 +14,23 @@ export function CheckoutPage({ cart, loadCart }) {
       let response = await axios.get('/api/delivery-options?expand=estimatedDeliveryTime')
 
         setDeliveryOption(response.data)
-
-        response = await axios.get('/api/payment-summary')
-
-        setPaymentSummary(response.data);
         
     }
     deliveryData();
 
   }, [ cart ])
-  
+
+  useEffect(() => {
+    const summary = async() => {
+
+        let response = await axios.get('/api/payment-summary')
+
+        setPaymentSummary(response.data);
+    }
+    summary()
+    
+
+  }, [ cart ])
   return (
     <>
       <link rel="icon" type="image/svg+xml" href="cart-favicon.png" />

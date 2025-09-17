@@ -1,10 +1,15 @@
 import axios from "axios";
 import { formatMoney } from "../../utils/money";
+import { useState } from "react";
 
 export function CartItemDetails({ cartItem, loadCart }) {
   const deleteCartItem = async () => {
     await axios.delete(`/api/cart-items/${cartItem.productId}`);
     await loadCart();
+  }
+  const [ trackQuantity, setTrackQuantity ] = useState(false);
+  const update = () => {
+    setTrackQuantity( !trackQuantity)
   }
 
   return (
@@ -21,9 +26,10 @@ export function CartItemDetails({ cartItem, loadCart }) {
         </div>
         <div className="product-quantity">
           <span>
-            Quantity: <span className="quantity-label">{cartItem.quantity}</span>
+            Quantity: <span className="quantity-label">{!trackQuantity && `${cartItem.quantity}`}</span>
           </span>
-          <span className="update-quantity-link link-primary">
+          <input type="text" className="update-quantity-link-Input" style={{ display: !trackQuantity ? 'none' : '' }}/>
+          <span className="update-quantity-link link-primary" onClick={ update }>
             Update
           </span>
           <span className="delete-quantity-link link-primary"

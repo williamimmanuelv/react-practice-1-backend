@@ -4,12 +4,17 @@ import { useState } from "react";
 
 export function Products({ product, loadCart }) {
     const [quantity, setQuantity] = useState(1);
+    const [ added, setAdded ] = useState(false);
     const addToCart = async () => {
         await axios.post(' /api/cart-items ', {
             productId: product.id,
             quantity,
         });
         await loadCart();
+        setAdded(true)
+        setTimeout(() => {
+            setAdded(false)
+        },2000)
     }
     const selectQuantity = (event) => {
                     const quantitySelected = Number(event.target.value);
@@ -55,7 +60,7 @@ export function Products({ product, loadCart }) {
 
             <div className="product-spacer"></div>
 
-            <div className="added-to-cart">
+            <div className="added-to-cart" style={{ opacity :added ? 1 : 0 }}>
                 <img src="images/icons/checkmark.png" />
                 Added
             </div>
