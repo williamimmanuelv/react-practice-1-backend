@@ -1,5 +1,6 @@
 import { NavLink } from 'react-router'
 import './Header.css'
+import { useState } from 'react';
 export function Header({ cart }) {
     let totalQuantity = 0 ;
 
@@ -7,6 +8,14 @@ export function Header({ cart }) {
         totalQuantity += carts.quantity;
     })
 
+    const [ val, setval ] = useState(null)
+    const con = (event) => {
+        setval(event.target.value)
+    } 
+    const consol = () => {
+        console.log(val);
+        
+    }
     return (
         <>
             <div className="header">
@@ -20,9 +29,9 @@ export function Header({ cart }) {
                 </div>
 
                 <div className="middle-section">
-                    <input className="search-bar" type="text" placeholder="Search" />
+                    <input className="search-bar" value={ val } onChange={ con } type="text" placeholder="Search" />
 
-                    <button className="search-button">
+                    <button className="search-button" onClick={ consol }>
                         <img className="search-icon" src="images/icons/search-icon.png" />
                     </button>
                 </div>

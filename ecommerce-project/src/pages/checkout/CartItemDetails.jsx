@@ -7,34 +7,46 @@ export function CartItemDetails({ cartItem, loadCart }) {
     await axios.delete(`/api/cart-items/${cartItem.productId}`);
     await loadCart();
   }
-  const [ isUpdate, setIsUpdate ] = useState(false);
+  const [isUpdate, setIsUpdate] = useState(false);
   const update = async () => {
-    setIsUpdate( !isUpdate);
-    if(isUpdate){
+    setIsUpdate(!isUpdate);
+    if (isUpdate) {
       await axios.put(`/api/cart-items/${cartItem.productId}`, {
         quantity: Number(Quantity)
-        
+
       })
-      
+
       setIsUpdate(false)
       await loadCart();
     }
-    else{
+    else {
       setIsUpdate(true)
     }
   }
-  const [ Quantity, setQuantity ] = useState(cartItem.quantity);
-  const updateQuantity = ( event ) => {
+  const [Quantity, setQuantity] = useState(cartItem.quantity);
+  const updateQuantity = (event) => {
     let a = event.target.value;
-    setQuantity( a )
+    setQuantity(a)
   }
 
+  // onkey
+
+  const onKey = (event) => {
+    const key = event.key 
+    if(key ==='Enter'){
+      update()
+    }
+    else if( key === 'Escape'){
+      setQuantity(cartItem.quantity);
+      setIsUpdate(false)
+    }
+  }
 
   return (
     <>
       <img className="product-image"
-                  src={cartItem.product.image} />
-                  
+        src={cartItem.product.image} />
+
       <div className="cart-item-details">
         <div className="product-name">
           {cartItem.product.name}
@@ -46,13 +58,13 @@ export function CartItemDetails({ cartItem, loadCart }) {
           <span>
             Quantity: <span className="quantity-label">{!isUpdate && `${cartItem.quantity}`}</span>
           </span>
-          <input type="text" value={ Quantity } onChange={ updateQuantity } className="update-quantity-link-Input" style={{ display: !isUpdate ? 'none' : '' }}/>
-          <span className="update-quantity-link link-primary" onClick={ update }>
+          <input type="text" value={Quantity} onKeyDown={onKey} onChange={updateQuantity} className="update-quantity-link-Input" style={{ display: !isUpdate ? 'none' : '' }} />
+          <span className="update-quantity-link link-primary" onClick={update}>
             Update
           </span>
           <span className="delete-quantity-link link-primary"
-            onClick={ deleteCartItem }
-            >
+            onClick={deleteCartItem}
+          >
             Delete
           </span>
         </div>
