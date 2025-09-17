@@ -7,10 +7,28 @@ export function CartItemDetails({ cartItem, loadCart }) {
     await axios.delete(`/api/cart-items/${cartItem.productId}`);
     await loadCart();
   }
-  const [ trackQuantity, setTrackQuantity ] = useState(false);
-  const update = () => {
-    setTrackQuantity( !trackQuantity)
+  const [ isUpdate, setIsUpdate ] = useState(false);
+  const update = async () => {
+    setIsUpdate( !isUpdate);
+    if(isUpdate){
+      await axios.put(`/api/cart-items/${cartItem.productId}`, {
+        quantity: Number(Quantity)
+        
+      })
+      
+      setIsUpdate(false)
+      await loadCart();
+    }
+    else{
+      setIsUpdate(true)
+    }
   }
+  const [ Quantity, setQuantity ] = useState(cartItem.quantity);
+  const updateQuantity = ( event ) => {
+    let a = event.target.value;
+    setQuantity( a )
+  }
+
 
   return (
     <>
@@ -26,9 +44,9 @@ export function CartItemDetails({ cartItem, loadCart }) {
         </div>
         <div className="product-quantity">
           <span>
-            Quantity: <span className="quantity-label">{!trackQuantity && `${cartItem.quantity}`}</span>
+            Quantity: <span className="quantity-label">{!isUpdate && `${cartItem.quantity}`}</span>
           </span>
-          <input type="text" className="update-quantity-link-Input" style={{ display: !trackQuantity ? 'none' : '' }}/>
+          <input type="text" value={ Quantity } onChange={ updateQuantity } className="update-quantity-link-Input" style={{ display: !isUpdate ? 'none' : '' }}/>
           <span className="update-quantity-link link-primary" onClick={ update }>
             Update
           </span>
