@@ -23,7 +23,10 @@ export function Products({ product, loadCart }) {
     return (
         <div className="product-container">
             <div className="product-image-container">
+
+                {/* data-testid="product-image" --> for the testing part in product.test.jsx */}
                 <img className="product-image"
+                    data-testid="product-image"
                     src={product.image} />
             </div>
 
@@ -32,9 +35,9 @@ export function Products({ product, loadCart }) {
             </div>
 
             <div className="product-rating-container">
-                <img className="product-rating-stars"
+                <img className="product-rating-stars" data-testid="product-rating-stars-image"
                     src={`images/ratings/rating-${product.rating.stars * 10}.png`} />
-                <div className="product-rating-count link-primary">
+                <div className="product-rating-count link-primary" data-testid="product-rating" >
                     {product.rating.count}
                 </div>
             </div>
