@@ -21,7 +21,7 @@ export function Products({ product, loadCart }) {
                     setQuantity(quantitySelected);
                 }
     return (
-        <div className="product-container">
+        <div className="product-container" data-testid="product-container">
             <div className="product-image-container">
 
                 {/* data-testid="product-image" --> for the testing part in product.test.jsx */}

@@ -12,7 +12,7 @@ export function HomePage({ cart , loadCart}) {
   useEffect(() => {
     const getHomeDate =  async () => {
       const response = await axios('/api/products') 
-        setProducts(response.data);
+        setProducts(response);
     };
       getHomeDate();
   },[])
