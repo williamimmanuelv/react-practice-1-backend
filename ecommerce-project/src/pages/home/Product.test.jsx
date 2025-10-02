@@ -13,7 +13,11 @@ describe('Product component', () => {
     // vi.fn = creates a fake function that doesn't do anything.
     let loadCart;
 
+    let user;
+
     beforeEach(() => {
+        
+        user = userEvent.setup()
         product = {
             id: "e43638ce-6aa0-4b85-b27f-e1d07eb678c6",
             image: "images/products/athletic-cotton-socks-6-pairs.jpg",
@@ -52,26 +56,58 @@ describe('Product component', () => {
         expect(
             screen.getByText('87')
         ).toBeInTheDocument();
+
+
     })
 
-    it('adds a product to the cart', async () => {
+    // exercise
 
-
+    it('quantity', async () => {
         render(<Products product={product} loadCart={loadCart} />)
 
-        // setting up userEvet
-        const user = userEvent.setup();
-        const addToCartButtom = screen.getByTestId('add-to-cart-button');
-        // this simulates the event click
-        await user.click(addToCartButtom);
+        const quantitySelector = screen.getByTestId('product-quantity-selector')
+
+        // expect(quantitySelector).toHaveValue('1');
+
+        // const user = userEvent.setup()
+
+        await user.selectOptions(quantitySelector, '3')
+
+        expect(quantitySelector).toHaveValue('3');
+
+        const addToCartButton = screen.getByTestId('add-to-cart-button');
+// excercise 9e
+        await user.click(addToCartButton);
 
         expect(axios.post).toHaveBeenCalledWith(
-            '/api/cart-items',
-            {
+            '/api/cart-items', {
                 productId: 'e43638ce-6aa0-4b85-b27f-e1d07eb678c6',
-                quantity: 1
+                quantity : 3,
             }
-        );
-        expect(loadCart).toHaveBeenCalledWith();
-    });
+        )
+        expect(loadCart).toHaveBeenCalled()
+
+
+})
+
+it('adds a product to the cart', async () => {
+
+
+    render(<Products product={product} loadCart={loadCart} />)
+
+    // setting up userEvet
+    // const user = userEvent.setup();
+    const addToCartButton = screen.getByTestId('add-to-cart-button');
+    // this simulates the event click
+    await user.click(addToCartButton);
+
+    expect(axios.post).toHaveBeenCalledWith(
+        '/api/cart-items',
+        {
+            productId: 'e43638ce-6aa0-4b85-b27f-e1d07eb678c6',
+            quantity: 1
+        }
+    );
+    expect(loadCart).toHaveBeenCalledWith();
+});
 })

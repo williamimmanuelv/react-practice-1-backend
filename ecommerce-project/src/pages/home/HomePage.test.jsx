@@ -3,23 +3,25 @@ import { it, expect, describe, vi, beforeEach } from 'vitest';
 import { render, screen, within } from '@testing-library/react';
 //  MemoryRouter is for testing
 import { MemoryRouter } from 'react-router';
-import userEvent from '@testing-library/user-event';
+// import userEvent from '@testing-library/user-event';
 import { HomePage } from './HomePage';
 import axios from 'axios';
+import userEvent from '@testing-library/user-event';
 
-vi.mock('axios')
+vi.mock('axios');
 
 describe('HomePage component', () => {
   let loadCart;
 
+  let user;
 
   beforeEach(() => {
     loadCart = vi.fn();
-
+    user = userEvent.setup();
     // the below code means whenenver we use axios.get its going
     //  to run this fake function. So basically we can get what we want from the fake api.
     // Here we can give axios.get a value and its going to be the parameter of this function.
-    axios.get.mockImplementation(async(urlPath) => {
+    axios.get.mockImplementation(async (urlPath) => {
       if (urlPath === '/api/products') {
         return {
           data: [
@@ -57,7 +59,7 @@ describe('HomePage component', () => {
         <HomePage cart={[]} loadCart={loadCart} />
       </MemoryRouter>
     );
-
+    // const screen = userEvent.setup()
     // to wait for the component to load we use  --> findAllByTestId
     const productContainers = await screen.findAllByTestId('product-container');
 
@@ -69,5 +71,49 @@ describe('HomePage component', () => {
     expect(
       within(productContainers[1]).getByText('Intermediate Size Basketball')
     ).toBeInTheDocument();
+  })
+// exercise
+  it('home exercise', async () => {
+
+    render(
+      <MemoryRouter>
+        <HomePage cart={[]} loadCart={loadCart} />
+      </MemoryRouter>
+    );
+
+    const productContainers = await screen.findAllByTestId('product-container');
+
+    const quantitySelector1 = within(productContainers[0]).getByTestId('product-quantity-selector');
+
+    await user.selectOptions(quantitySelector1, '2')
+
+
+    const button1 = within(productContainers[0]).getByTestId('add-to-cart-button');
+
+    await user.click(button1);
+    
+    const quantitySelector2 = within(productContainers[1]).getByTestId('product-quantity-selector');
+
+    await user.selectOptions(quantitySelector2, '3')
+
+
+    const button2 = within(productContainers[1]).getByTestId('add-to-cart-button');
+
+    await user.click(button2)
+
+    
+
+    expect(axios.post).toHaveBeenNthCalledWith(1, '/api/cart-items', {
+      productId: 'e43638ce-6aa0-4b85-b27f-e1d07eb678c6',
+      quantity: 2,
+    });
+
+    expect(axios.post).toHaveBeenNthCalledWith(2, '/api/cart-items', {
+      productId: '15b6fc6f-327a-4ec4-896f-486349e85a3d',
+      quantity: 3,
+    });
+
+    expect(loadCart).toHaveBeenCalledTimes(2)
+
   })
 })
