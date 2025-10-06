@@ -23,10 +23,6 @@ export function TrackingPage({ cart }) {
     return null
   }
 
-  console.log(orders);
-
-  console.log('produ' + productId);
-
   const orderProduct = orders.products.find((orderProduct) => {
     return orderProduct.productId === productId;
   });
